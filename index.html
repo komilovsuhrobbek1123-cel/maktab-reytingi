@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9-A Reyting Tizimi</title>
+    <style>
+        :root { --p: #6366f1; --bg: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        h1 { text-align: center; color: #1e293b; margin-bottom: 20px; }
+        
+        /* Input qismi */
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        input { flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; outline: none; min-width: 150px; }
+        input:focus { border-color: var(--p); }
+        .add-btn { background: var(--p); color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .add-btn:hover { background: #4f46e5; }
+
+        /* Jadval */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+        th { color: #64748b; font-size: 0.9rem; text-transform: uppercase; }
+        
+        .rank { font-weight: bold; width: 50px; }
+        .name { color: #334155; font-weight: 500; }
+        .score-box { background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 8px; font-weight: bold; }
+        
+        /* Medallar */
+        .gold { color: #fbbf24; }
+        .silver { color: #94a3b8; }
+        .bronze { color: #b45309; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏆 Sinf Reytingi (max: 100)</h1>
+    
+    <div class="input-group">
+        <input type="text" id="userName" placeholder="O'quvchi ismi...">
+        <input type="number" id="userScore" placeholder="Ball (0-100)" min="0" max="100">
+        <button class="add-btn" onclick="addStudent()">Qo'shish</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>O'rin</th>
+                <th>Ism</th>
+                <th>Ball</th>
+            </tr>
+        </thead>
+        <tbody id="ratingList">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    let students = [];
+
+    function addStudent() {
+        const nameInput = document.getElementById('userName');
+        const scoreInput = document.getElementById('userScore');
+        
+        const name = nameInput.value.trim();
+        const score = parseInt(scoreInput.value);
+
+        // Tekshirish
+        if (name === "" || isNaN(score)) {
+            alert("Iltimos, ism va ballni to'g'ri kiriting!");
+            return;
+        }
+        if (score < 0 || score > 100) {
+            alert("Ball 0 va 100 orasida bo'lishi kerak!");
+            return;
+        }
+
+        // Ro'yxatga qo'shish
+        students.push({ name: name, score: score });
+        
+        // Ball bo'yicha saralash (Kattadan kichikka)
+        students.sort((a, b) => b.score - a.score);
+
+        // Jadvalni yangilash
+        updateTable();
+
+        // Inputlarni tozalash
+        nameInput.value = "";
+        scoreInput.value = "";
+        nameInput.focus();
+    }
+
+    function updateTable() {
+        const list = document.getElementById('ratingList');
+        list.innerHTML = "";
+
+        students.forEach((student, index) => {
+            let medal = "";
+            let medalClass = "";
+            const rank = index + 1;
+
+            if (rank === 1) { medal = "🥇 "; medalClass = "gold"; }
+            else if (rank === 2) { medal = "🥈 "; medalClass = "silver"; }
+            else if (rank === 3) { medal = "🥉 "; medalClass = "bronze"; }
+            else { medal = rank + "."; }
+
+            list.innerHTML += `
+                <tr>
+                    <td class="rank ${medalClass}">${medal}</td>
+                    <td class="name">${student.name}</td>
+                    <td><span class="score-box">${student.score} / 100</span></td>
+                </tr>
+            `;
+        });
+    }
+</script>
+
+</body>
+</html>
